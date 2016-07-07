@@ -53,7 +53,7 @@ startTime = cellstr(datestr(BeforeTime, 'yyyy-mm-dd HH:MM:SS'));
 endTime = cellstr(datestr(AfterTime, 'yyyy-mm-dd HH:MM:SS'));
 
 %%
-for ii = 1:2%length(old_startTime)  
+for ii = 1:length(old_startTime)  
     %% IMF Bz
     if data_download == 1
         api = 'http://iswa.gsfc.nasa.gov/IswaSystemWebApp/DataStreamServlet';
@@ -86,22 +86,26 @@ for ii = 1:2%length(old_startTime)
     end
     
     if all == 1 && summary == 0
+        daydex = round(median(1:length(Bz))/7);
+        xaxis = [1 daydex daydex*2 daydex*3 daydex*4 daydex*5 daydex*6 daydex*7 daydex*8 daydex*9 daydex*10 daydex*11 daydex*12 daydex*13 length(Bz)];
+        
         figure(1)
         subplot(7,1,1);
         plot(startIndex:endIndex,Bz(startIndex:endIndex));hold on;ylim([-30 30]);ylabel('IMF Bz [nT]');grid minor
         title('RBE Events [+/- 7 days]');
-        set(gca, 'XTick',[length(Bz)/15 length(Bz)*2/15 length(Bz)*3/15 length(Bz)*4/15 length(Bz)*5/15 length(Bz)*6/15 length(Bz)*7/15 length(Bz)*8/15 length(Bz)*9/15 length(Bz)*10/15 length(Bz)*11/15 length(Bz)*12/15 length(Bz)*13/15 length(Bz)*14/15 length(Bz)*15/15]);
+        set(gca, 'XTick',xaxis);%[length(Bz)/15 length(Bz)*2/15 length(Bz)*3/15 length(Bz)*4/15 length(Bz)*5/15 length(Bz)*6/15 length(Bz)*7/15 length(Bz)*8/15 length(Bz)*9/15 length(Bz)*10/15 length(Bz)*11/15 length(Bz)*12/15 length(Bz)*13/15 length(Bz)*14/15 length(Bz)*15/15]);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
         %         set(h, 'XTick',t);
         %         set(h, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
     end
     
     if summary == 1 && ii == 1
-        Bz_summary = [];
+        Bz_summary = []; jump = 0;
         for jj = 1:length(eventTimes)
             Bz_data = importdata(sprintf('IMF_Bz_%s.txt',eventTimes{jj}(1:11)),' ',1);
             Timestamp = [strcat(Bz_data.textdata(2:end,1),{' '},Bz_data.textdata(2:end,2))];
             if length(Bz_data.data(:,1)) ~= 20161
+                jump = jump + 1;
                 continue
             end
             Bz_summary = [Bz_summary; Bz_data.data(:,1)];
@@ -110,17 +114,20 @@ for ii = 1:2%length(old_startTime)
         errorIndex = find(Bz_summary == -999.9);
         Bz_summary(errorIndex) = NaN;
         
-        Bzmatrix = reshape(Bz_summary,length(Bz_summary),[]);
-        Bz_avg = mean(Bzmatrix,2);
+        Bzmatrix = reshape(Bz_summary,[],length(eventTimes)-jump);
+        Bz_avg = nanmean(Bzmatrix,2);
         
         Day = ([1, 0, 0, 0] * [24*3600; 3600; 60; 1]) / 86400;
         t = [eventTime(ii)-(7*Day) eventTime(ii)-(6*Day) eventTime(ii)-(5*Day) eventTime(ii)-(4*Day) eventTime(ii)-(3*Day) eventTime(ii)-(2*Day) eventTime(ii)-(Day) eventTime(ii) eventTime(ii)+(Day) eventTime(ii)+(2*Day) eventTime(ii)+(3*Day) eventTime(ii)+(4*Day) eventTime(ii)+(5*Day) eventTime(ii)+(6*Day) eventTime(ii)+(7*Day)];
         %             startIndexKP = 1; endIndexKP = 114;
         
+        daydex = round(median(1:length(Bz_avg))/7);
+        xaxis = [1 daydex daydex*2 daydex*3 daydex*4 daydex*5 daydex*6 daydex*7 daydex*8 daydex*9 daydex*10 daydex*11 daydex*12 daydex*13 length(Bz_avg)];
+        
         subplot(7,1,1)
-        plot(1:length(Bz_avg),Bz_avg);hold on;ylim([-30 30]);ylabel('IMF Bz [nT]');grid minor
+        plot(1:length(Bz_avg),Bz_avg);hold on;ylim([-10 10]);ylabel('IMF Bz [nT]');grid minor
         title('RBE Events Averaged [+/- 7 days]');
-        set(gca, 'XTick',[length(Bz_avg)/15 length(Bz_avg)*2/15 length(Bz_avg)*3/15 length(Bz_avg)*4/15 length(Bz_avg)*5/15 length(Bz_avg)*6/15 length(Bz_avg)*7/15 length(Bz_avg)*8/15 length(Bz_avg)*9/15 length(Bz_avg)*10/15 length(Bz_avg)*11/15 length(Bz_avg)*12/15 length(Bz_avg)*13/15 length(Bz_avg)*14/15 length(Bz_avg)*15/15]);
+        set(gca, 'XTick',xaxis);%[length(Bz_avg)/15 length(Bz_avg)*2/15 length(Bz_avg)*3/15 length(Bz_avg)*4/15 length(Bz_avg)*5/15 length(Bz_avg)*6/15 length(Bz_avg)*7/15 length(Bz_avg)*8/15 length(Bz_avg)*9/15 length(Bz_avg)*10/15 length(Bz_avg)*11/15 length(Bz_avg)*12/15 length(Bz_avg)*13/15 length(Bz_avg)*14/15 length(Bz_avg)*15/15]);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
     end
     
@@ -169,20 +176,25 @@ for ii = 1:2%length(old_startTime)
         endIndex = find(not(cellfun('isempty', endIndex)));
     end
     if all == 1 && summary == 0
+        
+        daydex = round(median(1:length(BulkSpeed))/7);
+        xaxis = [1 daydex daydex*2 daydex*3 daydex*4 daydex*5 daydex*6 daydex*7 daydex*8 daydex*9 daydex*10 daydex*11 daydex*12 daydex*13 length(BulkSpeed)];
+
         subplot(7,1,2)
         plot(startIndex:endIndex,BulkSpeed(startIndex:endIndex));hold on;ylim([200 1100]);ylabel('SW Vel. [km/s]');grid minor
-        set(gca, 'XTick',[length(BulkSpeed)/15 length(BulkSpeed)*2/15 length(BulkSpeed)*3/15 length(BulkSpeed)*4/15 length(BulkSpeed)*5/15 length(BulkSpeed)*6/15 length(BulkSpeed)*7/15 length(BulkSpeed)*8/15 length(BulkSpeed)*9/15 length(BulkSpeed)*10/15 length(BulkSpeed)*11/15 length(BulkSpeed)*12/15 length(BulkSpeed)*13/15 length(BulkSpeed)*14/15 length(BulkSpeed)*15/15]);
+        set(gca, 'XTick',xaxis);%[length(BulkSpeed)/15 length(BulkSpeed)*2/15 length(BulkSpeed)*3/15 length(BulkSpeed)*4/15 length(BulkSpeed)*5/15 length(BulkSpeed)*6/15 length(BulkSpeed)*7/15 length(BulkSpeed)*8/15 length(BulkSpeed)*9/15 length(BulkSpeed)*10/15 length(BulkSpeed)*11/15 length(BulkSpeed)*12/15 length(BulkSpeed)*13/15 length(BulkSpeed)*14/15 length(BulkSpeed)*15/15]);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
 %         set(gca, 'XTick',t);
 %         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
     end
     
     if summary == 1 && ii == 1
-        BulkSpeed_summary = [];
+        BulkSpeed_summary = [];jump = 0;
         for jj = 1:length(eventTimes)
             BulkSpeed_data = importdata(sprintf('SW_BulkSpeed_%s.txt',eventTimes{jj}(1:11)),' ',1);
             Timestamp = [strcat(BulkSpeed_data.textdata(2:end,1),{' '},BulkSpeed_data.textdata(2:end,2))];
             if length(BulkSpeed_data.data(:,1)) ~= 20161
+                jump = jump + 1;
                 continue
             end
             BulkSpeed_summary = [BulkSpeed_summary; BulkSpeed_data.data(:,1)];
@@ -191,16 +203,18 @@ for ii = 1:2%length(old_startTime)
         errorIndex = find(BulkSpeed_summary == -9999.9);
         BulkSpeed_summary(errorIndex) = NaN;
         
-        BulkSpeedmatrix = reshape(BulkSpeed_summary,length(BulkSpeed_summary),[]);
-        BulkSpeed_avg = mean(BulkSpeedmatrix,2);
+        BulkSpeedmatrix = reshape(BulkSpeed_summary,[],length(eventTimes)-jump);
+        BulkSpeed_avg = nanmean(BulkSpeedmatrix,2);
         
         t = [eventTime(ii)-(7*Day) eventTime(ii)-(6*Day) eventTime(ii)-(5*Day) eventTime(ii)-(4*Day) eventTime(ii)-(3*Day) eventTime(ii)-(2*Day) eventTime(ii)-(Day) eventTime(ii) eventTime(ii)+(Day) eventTime(ii)+(2*Day) eventTime(ii)+(3*Day) eventTime(ii)+(4*Day) eventTime(ii)+(5*Day) eventTime(ii)+(6*Day) eventTime(ii)+(7*Day)];
         %             startIndexKP = 1; endIndexKP = 114;
-        BulkSpeed = BulkSpeed_avg;
+        
+        daydex = round(median(1:length(BulkSpeed_avg))/7);
+        xaxis = [1 daydex daydex*2 daydex*3 daydex*4 daydex*5 daydex*6 daydex*7 daydex*8 daydex*9 daydex*10 daydex*11 daydex*12 daydex*13 length(BulkSpeed_avg)];
         
         subplot(7,1,2)
-        plot(1:length(BulkSpeed_avg),BulkSpeed_avg);hold on;ylim([200 1100]);ylabel('SW Vel. [km/s]');grid minor
-        set(gca, 'XTick',[length(BulkSpeed)/15 length(BulkSpeed)*2/15 length(BulkSpeed)*3/15 length(BulkSpeed)*4/15 length(BulkSpeed)*5/15 length(BulkSpeed)*6/15 length(BulkSpeed)*7/15 length(BulkSpeed)*8/15 length(BulkSpeed)*9/15 length(BulkSpeed)*10/15 length(BulkSpeed)*11/15 length(BulkSpeed)*12/15 length(BulkSpeed)*13/15 length(BulkSpeed)*14/15 length(BulkSpeed)*15/15]);
+        plot(1:length(BulkSpeed_avg),BulkSpeed_avg);hold on;ylim([200 750]);ylabel('SW Vel. [km/s]');grid minor
+        set(gca, 'XTick',xaxis);%[length(BulkSpeed)/15 length(BulkSpeed)*2/15 length(BulkSpeed)*3/15 length(BulkSpeed)*4/15 length(BulkSpeed)*5/15 length(BulkSpeed)*6/15 length(BulkSpeed)*7/15 length(BulkSpeed)*8/15 length(BulkSpeed)*9/15 length(BulkSpeed)*10/15 length(BulkSpeed)*11/15 length(BulkSpeed)*12/15 length(BulkSpeed)*13/15 length(BulkSpeed)*14/15 length(BulkSpeed)*15/15]);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
     end
     
@@ -248,20 +262,24 @@ for ii = 1:2%length(old_startTime)
     end
     
     if all == 1 && summary == 0
+        daydex = round(median(1:length(Pdyn))/7);
+        xaxis = [1 daydex daydex*2 daydex*3 daydex*4 daydex*5 daydex*6 daydex*7 daydex*8 daydex*9 daydex*10 daydex*11 daydex*12 daydex*13 length(Pdyn)];
+        
         subplot(7,1,3)
         plot(startIndex:endIndex,Pdyn(startIndex:endIndex));hold on;ylim([0 15]);ylabel('Dynamic Pressure [nPa]');grid minor
-        set(gca, 'XTick',[length(Pdyn)/15 length(Pdyn)*2/15 length(Pdyn)*3/15 length(Pdyn)*4/15 length(Pdyn)*5/15 length(Pdyn)*6/15 length(Pdyn)*7/15 length(Pdyn)*8/15 length(Pdyn)*9/15 length(Pdyn)*10/15 length(Pdyn)*11/15 length(Pdyn)*12/15 length(Pdyn)*13/15 length(Pdyn)*14/15 length(Pdyn)*15/15]);
+        set(gca, 'XTick',xaxis);%[length(Pdyn)/15 length(Pdyn)*2/15 length(Pdyn)*3/15 length(Pdyn)*4/15 length(Pdyn)*5/15 length(Pdyn)*6/15 length(Pdyn)*7/15 length(Pdyn)*8/15 length(Pdyn)*9/15 length(Pdyn)*10/15 length(Pdyn)*11/15 length(Pdyn)*12/15 length(Pdyn)*13/15 length(Pdyn)*14/15 length(Pdyn)*15/15]);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
 %         set(gca, 'XTick',t);
 %         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
     end
     
     if summary == 1 && ii == 1
-        ACE_summary = [];
+        ACE_summary = [];jump = 0;
         for jj = 1:length(eventTimes)
             ACE_protonData = importdata(sprintf('ACE_protonD_%s.txt',eventTimes{jj}(1:11)),' ',1);
             Timestamp = [strcat(ACE_protonData.textdata(2:end,1),{' '},ACE_protonData.textdata(2:end,2))];
             if length(ACE_protonData.data(:,1)) ~= 20161
+                jump = jump + 1;
                 continue
             end
             ACE_summary = [ACE_summary; ACE_protonData.data(:,1)];
@@ -270,8 +288,8 @@ for ii = 1:2%length(old_startTime)
         errorIndex = find(ACE_summary == -9999.9);
         ACE_summary(errorIndex) = NaN;
         
-        ACEmatrix = reshape(ACE_summary,length(ACE_summary),[]);
-        ACE_avg = mean(ACEmatrix,2);
+        ACEmatrix = reshape(ACE_summary,[],length(eventTimes)-jump);
+        ACE_avg = nanmean(ACEmatrix,2);
         
         t = [eventTime(ii)-(7*Day) eventTime(ii)-(6*Day) eventTime(ii)-(5*Day) eventTime(ii)-(4*Day) eventTime(ii)-(3*Day) eventTime(ii)-(2*Day) eventTime(ii)-(Day) eventTime(ii) eventTime(ii)+(Day) eventTime(ii)+(2*Day) eventTime(ii)+(3*Day) eventTime(ii)+(4*Day) eventTime(ii)+(5*Day) eventTime(ii)+(6*Day) eventTime(ii)+(7*Day)];
         %             startIndexKP = 1; endIndexKP = 114;
@@ -279,9 +297,12 @@ for ii = 1:2%length(old_startTime)
         M_proton = 1.6726219*10^-27;
         Pdyn = (0.5 .* (ACE_avg.*10^6) .* M_proton .* ((BulkSpeed_avg.*1000).^2)).*10^9;
         
+        daydex = round(median(1:length(Pdyn))/7);
+        xaxis = [1 daydex daydex*2 daydex*3 daydex*4 daydex*5 daydex*6 daydex*7 daydex*8 daydex*9 daydex*10 daydex*11 daydex*12 daydex*13 length(Pdyn)];
+        
         subplot(7,1,3)
-        plot(1:length(Pdyn),Pdyn);hold on;ylim([0 15]);ylabel('SW Vel. [km/s]');grid minor
-        set(gca, 'XTick',[length(Pdyn)/15 length(Pdyn)*2/15 length(Pdyn)*3/15 length(Pdyn)*4/15 length(Pdyn)*5/15 length(Pdyn)*6/15 length(Pdyn)*7/15 length(Pdyn)*8/15 length(Pdyn)*9/15 length(Pdyn)*10/15 length(Pdyn)*11/15 length(Pdyn)*12/15 length(Pdyn)*13/15 length(Pdyn)*14/15 length(Pdyn)*15/15]);
+        plot(1:length(Pdyn),Pdyn);hold on;ylim([0 5]);ylabel('Dyn. Pressure [nPa]');grid minor
+        set(gca, 'XTick',xaxis);%[length(Pdyn)/15 length(Pdyn)*2/15 length(Pdyn)*3/15 length(Pdyn)*4/15 length(Pdyn)*5/15 length(Pdyn)*6/15 length(Pdyn)*7/15 length(Pdyn)*8/15 length(Pdyn)*9/15 length(Pdyn)*10/15 length(Pdyn)*11/15 length(Pdyn)*12/15 length(Pdyn)*13/15 length(Pdyn)*14/15 length(Pdyn)*15/15]);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
     end
     
@@ -346,29 +367,35 @@ for ii = 1:2%length(old_startTime)
 %         GOES_all_08 = GOES_all_08(~isnan(GOES_all_08));
 %         GOES_all_20 = GOES_all_20(~isnan(GOES_all_20));
         
+        daydex = round(median(1:length(E_flux_data_08))/7);
+        xaxis = [1 daydex daydex*2 daydex*3 daydex*4 daydex*5 daydex*6 daydex*7 daydex*8 daydex*9 daydex*10 daydex*11 daydex*12 daydex*13 length(E_flux_data_08)];
+
         subplot(7,1,4)%startIndex:endIndex
         plot(startIndex:endIndex,log10(E_flux_data_08));hold on;ylim([-2 6]);ylabel('log(e- Flux) [0.8 MeV]');grid minor
         hline = refline([0 5]);
         set(hline,'LineStyle','--')
-        set(gca, 'XTick',[length(E_flux_data_08)/15 length(E_flux_data_08)*2/15 length(E_flux_data_08)*3/15 length(E_flux_data_08)*4/15 length(E_flux_data_08)*5/15 length(E_flux_data_08)*6/15 length(E_flux_data_08)*7/15 length(E_flux_data_08)*8/15 length(E_flux_data_08)*9/15 length(E_flux_data_08)*10/15 length(E_flux_data_08)*11/15 length(E_flux_data_08)*12/15 length(E_flux_data_08)*13/15 length(E_flux_data_08)*14/15 length(E_flux_data_08)*15/15]);
+        set(gca, 'XTick',xaxis);%[length(E_flux_data_08)/15 length(E_flux_data_08)*2/15 length(E_flux_data_08)*3/15 length(E_flux_data_08)*4/15 length(E_flux_data_08)*5/15 length(E_flux_data_08)*6/15 length(E_flux_data_08)*7/15 length(E_flux_data_08)*8/15 length(E_flux_data_08)*9/15 length(E_flux_data_08)*10/15 length(E_flux_data_08)*11/15 length(E_flux_data_08)*12/15 length(E_flux_data_08)*13/15 length(E_flux_data_08)*14/15 length(E_flux_data_08)*15/15]);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
 %         set(gca, 'XTick',t);
 %         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
         
         subplot(7,1,5) % startIndex:endIndex instead of plotRange; E_flux_data_20(startIndex:endIndex)
         plot(startIndex:endIndex,log10(E_flux_data_20));hold on;ylim([-2 6]);ylabel('log(e- Flux) [2.0 MeV]');grid minor
-        set(gca, 'XTick',[length(E_flux_data_20)/15 length(E_flux_data_20)*2/15 length(E_flux_data_20)*3/15 length(E_flux_data_20)*4/15 length(E_flux_data_20)*5/15 length(E_flux_data_20)*6/15 length(E_flux_data_20)*7/15 length(E_flux_data_20)*8/15 length(E_flux_data_20)*9/15 length(E_flux_data_20)*10/15 length(E_flux_data_20)*11/15 length(E_flux_data_20)*12/15 length(E_flux_data_20)*13/15 length(E_flux_data_20)*14/15 length(E_flux_data_20)*15/15]);
+        hline = refline([0 5]);
+        set(hline,'LineStyle','--')
+        set(gca, 'XTick',xaxis);%[length(E_flux_data_20)/15 length(E_flux_data_20)*2/15 length(E_flux_data_20)*3/15 length(E_flux_data_20)*4/15 length(E_flux_data_20)*5/15 length(E_flux_data_20)*6/15 length(E_flux_data_20)*7/15 length(E_flux_data_20)*8/15 length(E_flux_data_20)*9/15 length(E_flux_data_20)*10/15 length(E_flux_data_20)*11/15 length(E_flux_data_20)*12/15 length(E_flux_data_20)*13/15 length(E_flux_data_20)*14/15 length(E_flux_data_20)*15/15]);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
 %         set(gca, 'XTick',t);
 %         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
     end
     
     if summary == 1 && ii == 1
-        E_flux_data_08_summary = []; E_flux_data_20_summary = [];
+        E_flux_data_08_summary = []; E_flux_data_20_summary = [];jump = 0;
         for jj = 1:length(eventTimes)
             E_flux_data = importdata(sprintf('GOES_e-_flux_%s.txt',eventTimes{jj}(1:11)),' ',1);
             Timestamp = [strcat(E_flux_data.textdata(2:end,1),{' '},E_flux_data.textdata(2:end,2))];
             if length(E_flux_data.data(:,1)) ~= 4031
+                jump = jump + 1;
                 continue
             end
             E_flux_data_08_summary = [E_flux_data_08_summary; E_flux_data.data(:,1)];
@@ -381,24 +408,33 @@ for ii = 1:2%length(old_startTime)
         errorIndex = find(E_flux_data_20_summary == -100000);
         E_flux_data_20_summary(errorIndex) = NaN;
         
-        Flux08matrix = reshape(E_flux_data_08_summary,length(E_flux_data_08_summary),[]);
-        Flux08_avg = mean(log10(Flux08matrix),2);
+        Flux08matrix = reshape(E_flux_data_08_summary,[],length(eventTimes)-jump);
+        Flux08_avg = nanmean(log10(Flux08matrix),2);
         
-        Flux20matrix = reshape(E_flux_data_20_summary,length(E_flux_data_20_summary),[]);
-        Flux20_avg = mean(log10(Flux20matrix),2);
+        Flux20matrix = reshape(E_flux_data_20_summary,[],length(eventTimes)-jump);
+        Flux20_avg = nanmean(log10(Flux20matrix),2);
         
         t = [eventTime(ii)-(7*Day) eventTime(ii)-(6*Day) eventTime(ii)-(5*Day) eventTime(ii)-(4*Day) eventTime(ii)-(3*Day) eventTime(ii)-(2*Day) eventTime(ii)-(Day) eventTime(ii) eventTime(ii)+(Day) eventTime(ii)+(2*Day) eventTime(ii)+(3*Day) eventTime(ii)+(4*Day) eventTime(ii)+(5*Day) eventTime(ii)+(6*Day) eventTime(ii)+(7*Day)];
         %             startIndexKP = 1; endIndexKP = 114;
-        E_flux_data_20 = Flux20_avg;
+        
+        daydex = round(median(1:length(Flux08_avg))/7);
+        xaxis = [1 daydex daydex*2 daydex*3 daydex*4 daydex*5 daydex*6 daydex*7 daydex*8 daydex*9 daydex*10 daydex*11 daydex*12 daydex*13 length(Flux08_avg)];
         
         subplot(7,1,4)
         plot(1:length(Flux08_avg),Flux08_avg);hold on;ylim([-2 6]);ylabel('log(e- Flux) [0.8 MeV]');grid minor
-        set(gca, 'XTick',[length(E_flux_data_20)/15 length(E_flux_data_20)*2/15 length(E_flux_data_20)*3/15 length(E_flux_data_20)*4/15 length(E_flux_data_20)*5/15 length(E_flux_data_20)*6/15 length(E_flux_data_20)*7/15 length(E_flux_data_20)*8/15 length(E_flux_data_20)*9/15 length(E_flux_data_20)*10/15 length(E_flux_data_20)*11/15 length(E_flux_data_20)*12/15 length(E_flux_data_20)*13/15 length(E_flux_data_20)*14/15 length(E_flux_data_20)*15/15]);
+        hline = refline([0 5]);
+        set(hline,'LineStyle','--')
+%         set(gca, 'XTick',[length(Flux08_avg)/15 length(Flux08_avg)*2/15 length(Flux08_avg)*3/15 length(Flux08_avg)*4/15 length(Flux08_avg)*5/15 length(Flux08_avg)*6/15 length(Flux08_avg)*7/15 length(Flux08_avg)*8/15 length(Flux08_avg)*9/15 length(Flux08_avg)*10/15 length(Flux08_avg)*11/15 length(Flux08_avg)*12/15 length(Flux08_avg)*13/15 length(Flux08_avg)*14/15 length(Flux08_avg)*15/15]);
+        set(gca, 'XTick',xaxis);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
         
         subplot(7,1,5)
         plot(1:length(Flux20_avg),Flux20_avg);hold on;ylim([-2 6]);ylabel('log(e- Flux) [2.0 MeV]');grid minor
-        set(gca, 'XTick',[length(E_flux_data_20)/15 length(E_flux_data_20)*2/15 length(E_flux_data_20)*3/15 length(E_flux_data_20)*4/15 length(E_flux_data_20)*5/15 length(E_flux_data_20)*6/15 length(E_flux_data_20)*7/15 length(E_flux_data_20)*8/15 length(E_flux_data_20)*9/15 length(E_flux_data_20)*10/15 length(E_flux_data_20)*11/15 length(E_flux_data_20)*12/15 length(E_flux_data_20)*13/15 length(E_flux_data_20)*14/15 length(E_flux_data_20)*15/15]);
+        hline = refline([0 5]);
+        set(hline,'LineStyle','--')
+%         set(gca, 'XTick',[length(Flux20_avg)/15 length(Flux20_avg)*2/15 length(Flux20_avg)*3/15 length(Flux20_avg)*4/15 length(Flux20_avg)*5/15 length(Flux20_avg)*6/15 length(Flux20_avg)*7/15 length(Flux20_avg)*8/15 length(Flux20_avg)*9/15 length(Flux20_avg)*10/15 length(Flux20_avg)*11/15 length(Flux20_avg)*12/15 length(Flux20_avg)*13/15 length(Flux20_avg)*14/15 length(Flux20_avg)*15/15]);
+%         set(gca, 'XTick',[1 288 576 864 1152 1440 1728 2016 2304 2592 2880 3168 3456 3744 4031]);
+        set(gca, 'XTick',xaxis);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
     end
     
@@ -456,20 +492,24 @@ for ii = 1:2%length(old_startTime)
     end
     
     if all == 1 && summary == 0
+        daydex = round(median(1:length(TotalField))/7);
+        xaxis = [1 daydex daydex*2 daydex*3 daydex*4 daydex*5 daydex*6 daydex*7 daydex*8 daydex*9 daydex*10 daydex*11 daydex*12 daydex*13 length(TotalField)];
+        
         subplot(7,1,6)
         plot(startIndex:endIndex,TotalField(startIndex:endIndex));hold on;ylim([0 250]);ylabel('Obs. B [nT]');grid minor
-        set(gca, 'XTick',[length(Bz)/15 length(Bz)*2/15 length(Bz)*3/15 length(Bz)*4/15 length(Bz)*5/15 length(Bz)*6/15 length(Bz)*7/15 length(Bz)*8/15 length(Bz)*9/15 length(Bz)*10/15 length(Bz)*11/15 length(Bz)*12/15 length(Bz)*13/15 length(Bz)*14/15 length(Bz)*15/15]);
+        set(gca, 'XTick',xaxis);%[length(Bz)/15 length(Bz)*2/15 length(Bz)*3/15 length(Bz)*4/15 length(Bz)*5/15 length(Bz)*6/15 length(Bz)*7/15 length(Bz)*8/15 length(Bz)*9/15 length(Bz)*10/15 length(Bz)*11/15 length(Bz)*12/15 length(Bz)*13/15 length(Bz)*14/15 length(Bz)*15/15]);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
 %         set(gca, 'XTick',t);
 %         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
     end
     
     if summary == 1 && ii == 1
-        TotalField_summary = [];
+        TotalField_summary = [];jump = 0;
         for jj = 1:length(eventTimes)
             TotalField_data = importdata(sprintf('observed_mag_%s.txt',eventTimes{jj}(1:11)),' ',1);
             Timestamp = [strcat(TotalField_data.textdata(2:end,1),{' '},TotalField_data.textdata(2:end,2))];
             if length(TotalField_data.data(:,1)) ~= 20161
+                jump = jump + 1;
                 continue
             end
             TotalField_summary = [TotalField_summary; TotalField_data.data(:,1)];
@@ -480,15 +520,18 @@ for ii = 1:2%length(old_startTime)
         errorIndex = find(TotalField_summary > 250);
         TotalField_summary(errorIndex) = NaN;
         
-        TotalFieldmatrix = reshape(TotalField_summary,length(TotalField_summary),[]);
-        TotalField_avg = mean(TotalFieldmatrix,2);
+        TotalFieldmatrix = reshape(TotalField_summary,[],length(eventTimes)-jump);
+        TotalField_avg = nanmean(TotalFieldmatrix,2);
         
         t = [eventTime(ii)-(7*Day) eventTime(ii)-(6*Day) eventTime(ii)-(5*Day) eventTime(ii)-(4*Day) eventTime(ii)-(3*Day) eventTime(ii)-(2*Day) eventTime(ii)-(Day) eventTime(ii) eventTime(ii)+(Day) eventTime(ii)+(2*Day) eventTime(ii)+(3*Day) eventTime(ii)+(4*Day) eventTime(ii)+(5*Day) eventTime(ii)+(6*Day) eventTime(ii)+(7*Day)];
         %             startIndexKP = 1; endIndexKP = 114;
         
+        daydex = round(median(1:length(TotalField_avg))/7);
+        xaxis = [1 daydex daydex*2 daydex*3 daydex*4 daydex*5 daydex*6 daydex*7 daydex*8 daydex*9 daydex*10 daydex*11 daydex*12 daydex*13 length(TotalField_avg)];
+        
         subplot(7,1,6)
-        plot(1:length(TotalField_avg),TotalField_avg);hold on;ylim([0 250]);ylabel('Obs. B [nT]');grid minor
-        set(gca, 'XTick',[length(TotalField_avg)/15 length(TotalField_avg)*2/15 length(TotalField_avg)*3/15 length(TotalField_avg)*4/15 length(TotalField_avg)*5/15 length(TotalField_avg)*6/15 length(TotalField_avg)*7/15 length(TotalField_avg)*8/15 length(TotalField_avg)*9/15 length(TotalField_avg)*10/15 length(TotalField_avg)*11/15 length(TotalField_avg)*12/15 length(TotalField_avg)*13/15 length(TotalField_avg)*14/15 length(TotalField_avg)*15/15]);
+        plot(1:length(TotalField_avg),TotalField_avg);hold on;ylim([0 150]);ylabel('Obs. B [nT]');grid minor
+        set(gca, 'XTick',xaxis);%[length(TotalField_avg)/15 length(TotalField_avg)*2/15 length(TotalField_avg)*3/15 length(TotalField_avg)*4/15 length(TotalField_avg)*5/15 length(TotalField_avg)*6/15 length(TotalField_avg)*7/15 length(TotalField_avg)*8/15 length(TotalField_avg)*9/15 length(TotalField_avg)*10/15 length(TotalField_avg)*11/15 length(TotalField_avg)*12/15 length(TotalField_avg)*13/15 length(TotalField_avg)*14/15 length(TotalField_avg)*15/15]);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
     end
     
@@ -532,10 +575,14 @@ for ii = 1:2%length(old_startTime)
             KPindex_all_data = [KPindex_all_data; KP_data.data(:,1)];
         end
         KPmatrix = reshape(KPindex_all_data,[],length(eventTimes));
-        KP_avg = mean(KPmatrix,2);
+        KP_avg = nanmean(KPmatrix,2);
         
         t = [eventTime(ii)-(7*Day) eventTime(ii)-(6*Day) eventTime(ii)-(5*Day) eventTime(ii)-(4*Day) eventTime(ii)-(3*Day) eventTime(ii)-(2*Day) eventTime(ii)-(Day) eventTime(ii) eventTime(ii)+(Day) eventTime(ii)+(2*Day) eventTime(ii)+(3*Day) eventTime(ii)+(4*Day) eventTime(ii)+(5*Day) eventTime(ii)+(6*Day) eventTime(ii)+(7*Day)];
         startIndexKP = 1; endIndexKP = 114;
+        
+        daydex = round(median(1:length(KP_avg))/7);
+        xaxis = [2 2+daydex 2+daydex*2 2+daydex*3 2+daydex*4 2+daydex*5 2+daydex*6 2+daydex*7 2+daydex*8 2+daydex*9 2+daydex*10 2+daydex*11 2+daydex*12 2+daydex*13 length(KP_avg)];
+        
 %         [tf, loc] = ismember(TimestampnumKP, Timestampnum);
 %         KP_t_all = nan(size(Timestampnum));
 %         KP_all = KP_t_all;
@@ -556,7 +603,7 @@ for ii = 1:2%length(old_startTime)
         area(Xdata, Ydata);ylim([0 9]);hold on;ylabel('KP Index');grid minor
         
         KP = KP_data.data(:,1);
-        set(gca, 'XTick',[length(KP)/15 length(KP)*2/15 length(KP)*3/15 length(KP)*4/15 length(KP)*5/15 length(KP)*6/15 length(KP)*7/15 length(KP)*8/15 length(KP)*9/15 length(KP)*10/15 length(KP)*11/15 length(KP)*12/15 length(KP)*13/15 length(KP)*14/15 length(KP)*15/15]);
+        set(gca, 'XTick',xaxis);%[length(KP)/15 length(KP)*2/15 length(KP)*3/15 length(KP)*4/15 length(KP)*5/15 length(KP)*6/15 length(KP)*7/15 length(KP)*8/15 length(KP)*9/15 length(KP)*10/15 length(KP)*11/15 length(KP)*12/15 length(KP)*13/15 length(KP)*14/15 length(KP)*15/15]);
 %         set(gca, 'XTick',t);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
     end
