@@ -1,7 +1,7 @@
 clear all;close all;
 
-all = 1; % 0 for individual event plots
-summary = 1; % 1 for averaged data and only when all = 1
+all = 0; % 0 for individual event plots
+summary = 0; % 1 for averaged data and only when all = 1
 % NEVER have all = 0 summary = 1
 
 full_download = 0; % run to do initial time correction for 10^5 Eflux
@@ -641,7 +641,10 @@ for ii = 1:length(old_startTime)
         set(gca, 'XTick',t);
         set(gca, 'XTickLabel',{'-7','-6','-5','-4','-3','-2','-1','0','1','2','3','4','5','6','7'});
         
+        set(gcf,'visible','off')
+        
         saveFigure(gcf, sprintf('%s.png',old_eventTimes{ii}(1:10)));
+        close all
 %         print('-depsc2', 'test.eps')
 %         print(gcf, '-dpdf', sprintf('%s.pdf',eventTimes{ii}(1:10)));
     end
