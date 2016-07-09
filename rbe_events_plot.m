@@ -21,11 +21,11 @@ for ii = 1:length(old_startTime)
     if full_download == 1
         api = 'http://iswa.gsfc.nasa.gov/IswaSystemWebApp/DataStreamServlet';
         url = sprintf([api '?format=text&quantity=E_8,E2_0&resource=GOES-13,GOES-13&resourceInstance=GOES-13,GOES-13&end-time=%s&begin-time=%s'],old_endTime{ii},old_startTime{ii});
-        filename = sprintf('GOES_e-_flux_%s_tmp.txt',old_eventTimes{ii}(1:11));
+        filename = sprintf('./data_files/GOES_e-_flux_%s_tmp.txt',old_eventTimes{ii}(1:11));
         outfilename = websave(filename,url);
     end
     
-    E_flux_data = importdata(sprintf('GOES_e-_flux_%s_tmp.txt',old_eventTimes{ii}(1:11)),' ',1);
+    E_flux_data = importdata(sprintf('./data_files/GOES_e-_flux_%s_tmp.txt',old_eventTimes{ii}(1:11)),' ',1);
     
     Timestamp = [strcat(E_flux_data.textdata(2:end,1),{' '},E_flux_data.textdata(2:end,2))];
     E_flux_data_08 = E_flux_data.data(:,1);
@@ -58,12 +58,12 @@ for ii = 1:length(old_startTime)
     if data_download == 1
         api = 'http://iswa.gsfc.nasa.gov/IswaSystemWebApp/DataStreamServlet';
         url = sprintf([api '?format=text&quantity=B_z&resource=ACE&resourceInstance=ACE&end-time=%s&begin-time=%s'],endTime{ii},startTime{ii});
-        filename = sprintf('IMF_Bz_%s.txt',eventTimes{ii}(1:11));
+        filename = sprintf('./data_files/IMF_Bz_%s.txt',eventTimes{ii}(1:11));
         outfilename = websave(filename,url);
     end
     
     if summary == 0
-        IMF_Bz_data = importdata(sprintf('IMF_Bz_%s.txt',eventTimes{ii}(1:11)),' ',1);
+        IMF_Bz_data = importdata(sprintf('./data_files/IMF_Bz_%s.txt',eventTimes{ii}(1:11)),' ',1);
         
         Timestamp = [strcat(IMF_Bz_data.textdata(2:end,1),{' '},IMF_Bz_data.textdata(2:end,2))];
         Bz = IMF_Bz_data.data(:,1);
@@ -102,7 +102,7 @@ for ii = 1:length(old_startTime)
     if summary == 1 && ii == 1
         Bz_summary = []; jump = 0;
         for jj = 1:length(eventTimes)
-            Bz_data = importdata(sprintf('IMF_Bz_%s.txt',eventTimes{jj}(1:11)),' ',1);
+            Bz_data = importdata(sprintf('./data_files/IMF_Bz_%s.txt',eventTimes{jj}(1:11)),' ',1);
             Timestamp = [strcat(Bz_data.textdata(2:end,1),{' '},Bz_data.textdata(2:end,2))];
             if length(Bz_data.data(:,1)) ~= 20161
                 jump = jump + 1;
@@ -149,12 +149,12 @@ for ii = 1:length(old_startTime)
     if data_download == 1
         api = 'http://iswa.gsfc.nasa.gov/IswaSystemWebApp/DataStreamServlet';
         url = sprintf([api '?format=text&quantity=BulkSpeed&resource=ACE&resourceInstance=ACE&end-time=%s&begin-time=%s'],endTime{ii},startTime{ii});
-        filename = sprintf('SW_BulkSpeed_%s.txt',eventTimes{ii}(1:11));
+        filename = sprintf('./data_files/SW_BulkSpeed_%s.txt',eventTimes{ii}(1:11));
         outfilename = websave(filename,url);
     end
     
     if summary == 0
-        BulkSpeed_data = importdata(sprintf('SW_BulkSpeed_%s.txt',eventTimes{ii}(1:11)),' ',1);
+        BulkSpeed_data = importdata(sprintf('./data_files/SW_BulkSpeed_%s.txt',eventTimes{ii}(1:11)),' ',1);
         
         Timestamp = [strcat(BulkSpeed_data.textdata(2:end,1),{' '},BulkSpeed_data.textdata(2:end,2))];
         BulkSpeed = BulkSpeed_data.data(:,1);
@@ -191,7 +191,7 @@ for ii = 1:length(old_startTime)
     if summary == 1 && ii == 1
         BulkSpeed_summary = [];jump = 0;
         for jj = 1:length(eventTimes)
-            BulkSpeed_data = importdata(sprintf('SW_BulkSpeed_%s.txt',eventTimes{jj}(1:11)),' ',1);
+            BulkSpeed_data = importdata(sprintf('./data_files/SW_BulkSpeed_%s.txt',eventTimes{jj}(1:11)),' ',1);
             Timestamp = [strcat(BulkSpeed_data.textdata(2:end,1),{' '},BulkSpeed_data.textdata(2:end,2))];
             if length(BulkSpeed_data.data(:,1)) ~= 20161
                 jump = jump + 1;
@@ -234,12 +234,12 @@ for ii = 1:length(old_startTime)
     if data_download == 1
         api = 'http://iswa.gsfc.nasa.gov/IswaSystemWebApp/DataStreamServlet';
         url = sprintf([api '?format=text&quantity=ProtonDensity&resource=ACE&resourceInstance=ACE&end-time=%s&begin-time=%s'],endTime{ii},startTime{ii});
-        filename = sprintf('ACE_protonD_%s.txt',eventTimes{ii}(1:11));
+        filename = sprintf('./data_files/ACE_protonD_%s.txt',eventTimes{ii}(1:11));
         outfilename = websave(filename,url);
     end
     
     if summary == 0
-        ACE_protonData = importdata(sprintf('ACE_protonD_%s.txt',eventTimes{ii}(1:11)),' ',1);
+        ACE_protonData = importdata(sprintf('./data_files/ACE_protonD_%s.txt',eventTimes{ii}(1:11)),' ',1);
         Timestamp = [strcat(ACE_protonData.textdata(2:end,1),{' '},ACE_protonData.textdata(2:end,2))];
         ACE_protonD = ACE_protonData.data(:,1);
         
@@ -276,7 +276,7 @@ for ii = 1:length(old_startTime)
     if summary == 1 && ii == 1
         ACE_summary = [];jump = 0;
         for jj = 1:length(eventTimes)
-            ACE_protonData = importdata(sprintf('ACE_protonD_%s.txt',eventTimes{jj}(1:11)),' ',1);
+            ACE_protonData = importdata(sprintf('./data_files/ACE_protonD_%s.txt',eventTimes{jj}(1:11)),' ',1);
             Timestamp = [strcat(ACE_protonData.textdata(2:end,1),{' '},ACE_protonData.textdata(2:end,2))];
             if length(ACE_protonData.data(:,1)) ~= 20161
                 jump = jump + 1;
@@ -321,12 +321,12 @@ for ii = 1:length(old_startTime)
     if data_download == 1
         api = 'http://iswa.gsfc.nasa.gov/IswaSystemWebApp/DataStreamServlet';
         url = sprintf([api '?format=text&quantity=E_8,E2_0&resource=GOES-13,GOES-13&resourceInstance=GOES-13,GOES-13&end-time=%s&begin-time=%s'],endTime{ii},startTime{ii});
-        filename = sprintf('GOES_e-_flux_%s.txt',eventTimes{ii}(1:11));
+        filename = sprintf('./data_files/GOES_e-_flux_%s.txt',eventTimes{ii}(1:11));
         outfilename = websave(filename,url);
     end
     
     if summary == 0
-        E_flux_data = importdata(sprintf('GOES_e-_flux_%s.txt',eventTimes{ii}(1:11)),' ',1);
+        E_flux_data = importdata(sprintf('./data_files/GOES_e-_flux_%s.txt',eventTimes{ii}(1:11)),' ',1);
         
         Timestamp = [strcat(E_flux_data.textdata(2:end,1),{' '},E_flux_data.textdata(2:end,2))];
         E_flux_data_08 = E_flux_data.data(:,1);
@@ -392,7 +392,7 @@ for ii = 1:length(old_startTime)
     if summary == 1 && ii == 1
         E_flux_data_08_summary = []; E_flux_data_20_summary = [];jump = 0;
         for jj = 1:length(eventTimes)
-            E_flux_data = importdata(sprintf('GOES_e-_flux_%s.txt',eventTimes{jj}(1:11)),' ',1);
+            E_flux_data = importdata(sprintf('./data_files/GOES_e-_flux_%s.txt',eventTimes{jj}(1:11)),' ',1);
             Timestamp = [strcat(E_flux_data.textdata(2:end,1),{' '},E_flux_data.textdata(2:end,2))];
             if length(E_flux_data.data(:,1)) ~= 4031
                 jump = jump + 1;
@@ -461,12 +461,12 @@ for ii = 1:length(old_startTime)
     if data_download == 1
         api = 'http://iswa.gsfc.nasa.gov/IswaSystemWebApp/DataStreamServlet';
         url = sprintf([api '?format=text&quantity=Hp,He,Hn,TotalField&resource=GOES-13,GOES-13,GOES-13,GOES-13&resourceInstance=GOES-13,GOES-13,GOES-13,GOES-13&end-time=%s&begin-time=%s'],endTime{ii},startTime{ii});
-        filename = sprintf('observed_mag_%s.txt',eventTimes{ii}(1:11));
+        filename = sprintf('./data_files/observed_mag_%s.txt',eventTimes{ii}(1:11));
         outfilename = websave(filename,url);
     end
     
     if summary == 0
-        TotalB_data = importdata(sprintf('observed_mag_%s.txt',eventTimes{ii}(1:11)),' ',1);
+        TotalB_data = importdata(sprintf('./data_files/observed_mag_%s.txt',eventTimes{ii}(1:11)),' ',1);
         
         Timestamp = [strcat(TotalB_data.textdata(2:end,1),{' '},TotalB_data.textdata(2:end,2))];
         Hp = TotalB_data.data(:,1);He = TotalB_data.data(:,2);Hn = TotalB_data.data(:,3);TotalField = TotalB_data.data(:,4);
@@ -506,7 +506,7 @@ for ii = 1:length(old_startTime)
     if summary == 1 && ii == 1
         TotalField_summary = [];jump = 0;
         for jj = 1:length(eventTimes)
-            TotalField_data = importdata(sprintf('observed_mag_%s.txt',eventTimes{jj}(1:11)),' ',1);
+            TotalField_data = importdata(sprintf('./data_files/observed_mag_%s.txt',eventTimes{jj}(1:11)),' ',1);
             Timestamp = [strcat(TotalField_data.textdata(2:end,1),{' '},TotalField_data.textdata(2:end,2))];
             if length(TotalField_data.data(:,1)) ~= 20161
                 jump = jump + 1;
@@ -560,14 +560,14 @@ for ii = 1:length(old_startTime)
         
         api = 'http://iswa.gsfc.nasa.gov/IswaSystemWebApp/DataStreamServlet';
         url = sprintf([api '?format=text&quantity=KP&resource=NOAA-KP&resourceInstance=NOAA-KP&end-time=%s&begin-time=%s'],KPendTime,KPstartTime);
-        filename = sprintf('KP_index_%s.txt',eventTimes{ii}(1:11));
+        filename = sprintf('./data_files/KP_index_%s.txt',eventTimes{ii}(1:11));
         outfilename = websave(filename,url);
     end
     
     if all == 1 && ii == 1
         KPindex_all_data = [];
         for jj = 1:length(eventTimes)
-            KP_data = importdata(sprintf('KP_index_%s.txt',eventTimes{jj}(1:11)),' ',1);
+            KP_data = importdata(sprintf('./data_files/KP_index_%s.txt',eventTimes{jj}(1:11)),' ',1);
             TimestampKP = [strcat(KP_data.textdata(2:end,1),{' '},KP_data.textdata(2:end,2))];
             if length(KP_data.data(:,1)) == 115
                 KP_data.data(1,:) = [];
@@ -610,7 +610,7 @@ for ii = 1:length(old_startTime)
     
     if all == 0
     
-        KP_data = importdata(sprintf('KP_index_%s.txt',eventTimes{ii}(1:11)),' ',1);
+        KP_data = importdata(sprintf('./data_files/KP_index_%s.txt',eventTimes{ii}(1:11)),' ',1);
         TimestampKP = [strcat(KP_data.textdata(2:end,1),{' '},KP_data.textdata(2:end,2))];
         KPindex_data = KP_data.data(:,1);
     
