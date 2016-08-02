@@ -3,11 +3,10 @@ clear all; close all; clear; clc;
 filepath = 'RBE_times_revised.txt';
 [old_startTime startTime old_eventTimes eventTimes eventTime endTime] = time_corrected_download(filepath,0,0);
 
-days3_Bz = [];days3_Bt = [];days3_Bulk = [];days3_Pdyn = [];days3_B = [];days3_KP = [];
-days2_Bz = [];days2_Bt = [];days2_Bulk = [];days2_Pdyn = [];days2_B = [];days2_KP = [];
-
-daysP3_J08 = [];daysP3_J20 = [];daysM3_J08 = [];daysM3_J20 = [];
-daysP2_J08 = [];daysP2_J20 = [];daysM2_J08 = [];daysM2_J20 = [];
+daysP3_Bz = [];daysP3_Bt = [];daysP3_Bulk = [];daysP3_Pdyn = [];daysP3_J08 = [];daysP3_J20 = [];daysP3_B = [];daysP3_KP = [];
+daysM3_Bz = [];daysM3_Bt = [];daysM3_Bulk = [];daysM3_Pdyn = [];daysM3_J08 = [];daysM3_J20 = [];daysM3_B = [];daysM3_KP = [];
+daysP2_Bz = [];daysP2_Bt = [];daysP2_Bulk = [];daysP2_Pdyn = [];daysP2_J08 = [];daysP2_J20 = [];daysP2_B = [];daysP2_KP = [];
+daysM2_Bz = [];daysM2_Bt = [];daysM2_Bulk = [];daysM2_Pdyn = [];daysM2_J08 = [];daysM2_J20 = [];daysM2_B = [];daysM2_KP = [];
 
 % progressbar
 for ii = 1:length(old_startTime)
@@ -48,7 +47,10 @@ for ii = 1:length(old_startTime)
     Day = ([1, 0, 0, 0] * [24*3600; 3600; 60; 1]) / 86400;
     t = [median(Timestampnum)-(7*Day) median(Timestampnum)-(6*Day) median(Timestampnum)-(5*Day) median(Timestampnum)-(4*Day) median(Timestampnum)-(3*Day) median(Timestampnum)-(2*Day) median(Timestampnum)-(Day) median(Timestampnum) median(Timestampnum)+(Day) median(Timestampnum)+(2*Day) median(Timestampnum)+(3*Day) median(Timestampnum)+(4*Day) median(Timestampnum)+(5*Day) median(Timestampnum)+(6*Day) median(Timestampnum)+(7*Day)];
     
-    days3_Bz = [days3_Bz; nanmean(Bz(5761:10081))];days2_Bz = [days2_Bz; nanmean(Bz(7201:10081))];
+    daysP3_Bz = [daysP3_Bz; nanmean(Bz(10081:14401))];
+    daysP2_Bz = [daysP2_Bz; nanmean(Bz(10081:12961))];
+    daysM3_Bz = [daysM3_Bz; nanmean(Bz(5761:10081))];
+    daysM2_Bz = [daysM2_Bz; nanmean(Bz(7201:10081))];
     
     figure(ii)
     ah1 = subplot(7,1,1);
@@ -109,7 +111,10 @@ for ii = 1:length(old_startTime)
     Day = ([1, 0, 0, 0] * [24*3600; 3600; 60; 1]) / 86400;
     t = [median(Timestampnum)-(7*Day) median(Timestampnum)-(6*Day) median(Timestampnum)-(5*Day) median(Timestampnum)-(4*Day) median(Timestampnum)-(3*Day) median(Timestampnum)-(2*Day) median(Timestampnum)-(Day) median(Timestampnum) median(Timestampnum)+(Day) median(Timestampnum)+(2*Day) median(Timestampnum)+(3*Day) median(Timestampnum)+(4*Day) median(Timestampnum)+(5*Day) median(Timestampnum)+(6*Day) median(Timestampnum)+(7*Day)];
     
-    days3_Bt = [days3_Bt; nanmean(Bt(5761:10081))];days2_Bt = [days2_Bt; nanmean(Bt(7201:10081))];
+    daysP3_Bt = [daysP3_Bt; nanmean(Bt(10081:14401))];
+    daysP2_Bt = [daysP2_Bt; nanmean(Bt(10081:12961))];
+    daysM3_Bt = [daysM3_Bt; nanmean(Bt(5761:10081))];
+    daysM2_Bt = [daysM2_Bt; nanmean(Bt(7201:10081))];
     
     figure(ii)
     ah2 = subplot(7,1,2);
@@ -171,7 +176,10 @@ for ii = 1:length(old_startTime)
     startIndex = find(not(cellfun('isempty', startIndex)));
     endIndex = find(not(cellfun('isempty', endIndex)));
     
-    days3_Bulk = [days3_Bulk; nanmean(BulkSpeed(5761:10081))];days2_Bulk = [days2_Bulk; nanmean(BulkSpeed(7201:10081))];
+    daysP3_Bulk = [daysP3_Bulk; nanmean(BulkSpeed(10081:14401))];
+    daysP2_Bulk = [daysP2_Bulk; nanmean(BulkSpeed(10081:12961))];
+    daysM3_Bulk = [daysM3_Bulk; nanmean(BulkSpeed(5761:10081))];
+    daysM2_Bulk = [daysM2_Bulk; nanmean(BulkSpeed(7201:10081))];
     
     figure(ii)
     ah3 = subplot(7,1,3);
@@ -233,7 +241,10 @@ for ii = 1:length(old_startTime)
     startIndex = find(not(cellfun('isempty', startIndex)));
     endIndex = find(not(cellfun('isempty', endIndex)));
     
-    days3_Pdyn = [days3_Pdyn; nanmean(Pdyn(5761:10081))];days2_Pdyn = [days2_Pdyn; nanmean(Pdyn(7201:10081))];
+    daysP3_Pdyn = [daysP3_Pdyn; nanmean(Pdyn(10081:14401))];
+    daysP2_Pdyn = [daysP2_Pdyn; nanmean(Pdyn(10081:12961))];
+    daysM3_Pdyn = [daysM3_Pdyn; nanmean(Pdyn(5761:10081))];
+    daysM2_Pdyn = [daysM2_Pdyn; nanmean(Pdyn(7201:10081))];
     
     figure(ii)
     ah4 = subplot(7,1,4);
@@ -384,8 +395,10 @@ for ii = 1:length(old_startTime)
     %     plotRange = linspace(0,1,dt);
     %     plotRange = linspace(datenum(startTime{ii}),datenum(endTime{ii}),dt);
     
-    %         days3_Pdyn = [];days3_J08 = [];days3_J20 = [];days3_B = [];days3_KP = [];
-    days3_B = [days3_B; nanmean(TotalField(5761:10081))];days2_B = [days2_B; nanmean(TotalField(7201:10081))];
+    daysP3_B = [daysP3_B; nanmean(TotalField(10081:14401))];
+    daysP2_B = [daysP2_B; nanmean(TotalField(10081:12961))];
+    daysM3_B = [daysM3_B; nanmean(TotalField(5761:10081))];
+    daysM2_B = [daysM2_B; nanmean(TotalField(7201:10081))];
     
     figure(ii)
     ah6 = subplot(7,1,6);
@@ -409,7 +422,10 @@ for ii = 1:length(old_startTime)
     % t = [eventTime(ii)-(7*Day) eventTime(ii)-(6*Day) eventTime(ii)-(5*Day) eventTime(ii)-(4*Day) eventTime(ii)-(3*Day) eventTime(ii)-(2*Day) eventTime(ii)-(Day) eventTime(ii) eventTime(ii)+(Day) eventTime(ii)+(2*Day) eventTime(ii)+(3*Day) eventTime(ii)+(4*Day) eventTime(ii)+(5*Day) eventTime(ii)+(6*Day) eventTime(ii)+(7*Day)];
     startIndexKP = 1; endIndexKP = 114;
     
-    days3_KP = [days3_KP; nanmean(KPindex_data(34:58))];days2_KP = [days2_KP; nanmean(KPindex_data(42:58))];
+    daysP3_KP = [daysP3_KP; nanmean(KPindex_data(58:82))];
+    daysP2_KP = [daysP2_KP; nanmean(KPindex_data(58:74))];
+    daysM3_KP = [daysM3_KP; nanmean(KPindex_data(34:58))];
+    daysM2_KP = [daysM2_KP; nanmean(KPindex_data(42:58))];
     
     figure(ii)
     ah7 = subplot(7,1,7);
@@ -522,26 +538,50 @@ for ii = 1:length(old_startTime)
 %     progressbar(ii/length(old_eventTimes));
 end
 %% 3 Day Summary (Before)
-days3_all = horzcat(days3_Bz,days3_Bt,days3_Bulk,days3_Pdyn,daysM3_J08,daysM3_J20,days3_B,days3_KP);
+daysM3_all = horzcat(daysM3_Bz,daysM3_Bt,daysM3_Bulk,daysM3_Pdyn,daysM3_J08,daysM3_J20,daysM3_B,daysM3_KP);
 
-filename_out = '3day_all_event_summaries.txt';%sprintf([path_to_output_files '%s_%s_supermag_MLT.txt'],startTime(1:10),endTime(1:10));
+filename_out = 'M3day_all_event_summaries.txt';%sprintf([path_to_output_files '%s_%s_supermag_MLT.txt'],startTime(1:10),endTime(1:10));
 fid_out = fopen(filename_out,'w');
 
 fprintf(fid_out,'%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n','Timestamp','IMF Bz','SW B Total','BulkSpeed','Dynamic Pressure','Eflux [0.8 MeV]','Eflux [2.0 MeV]','Observed B','KP Index');
-for kk = 1:size(days3_all,1)
-    fprintf(fid_out,'%s\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t\n',eventTimes{kk},days3_all(kk,:));
+for kk = 1:size(daysM3_all,1)
+    fprintf(fid_out,'%s\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t\n',eventTimes{kk},daysM3_all(kk,:));
 end
 fclose(fid_out);
 
 %% 2 Day Summary (Before)
-days2_all = horzcat(days2_Bz,days2_Bt,days2_Bulk,days2_Pdyn,daysM2_J08,daysM2_J20,days2_B,days2_KP);
+daysM2_all = horzcat(daysM2_Bz,daysM2_Bt,daysM2_Bulk,daysM2_Pdyn,daysM2_J08,daysM2_J20,daysM2_B,daysM2_KP);
 
-filename_out = '2day_all_event_summaries.txt';%sprintf([path_to_output_files '%s_%s_supermag_MLT.txt'],startTime(1:10),endTime(1:10));
+filename_out = 'M2day_all_event_summaries.txt';%sprintf([path_to_output_files '%s_%s_supermag_MLT.txt'],startTime(1:10),endTime(1:10));
 fid_out = fopen(filename_out,'w');
 
 fprintf(fid_out,'%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n','Timestamp','IMF Bz','SW B Total','BulkSpeed','Dynamic Pressure','Eflux [0.8 MeV]','Eflux [2.0 MeV]','Observed B','KP Index');
-for kk = 1:size(days2_all,1)
-    fprintf(fid_out,'%s\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t\n',eventTimes{kk},days3_all(kk,:));
+for kk = 1:size(daysM2_all,1)
+    fprintf(fid_out,'%s\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t\n',eventTimes{kk},daysM2_all(kk,:));
+end
+fclose(fid_out);
+
+%% 3 Day Summary (After)
+daysP3_all = horzcat(daysP3_Bz,daysP3_Bt,daysP3_Bulk,daysP3_Pdyn,daysP3_J08,daysP3_J20,daysP3_B,daysP3_KP);
+
+filename_out = 'P3day_all_event_summaries.txt';%sprintf([path_to_output_files '%s_%s_supermag_MLT.txt'],startTime(1:10),endTime(1:10));
+fid_out = fopen(filename_out,'w');
+
+fprintf(fid_out,'%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n','Timestamp','IMF Bz','SW B Total','BulkSpeed','Dynamic Pressure','Eflux [0.8 MeV]','Eflux [2.0 MeV]','Observed B','KP Index');
+for kk = 1:size(daysP3_all,1)
+    fprintf(fid_out,'%s\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t\n',eventTimes{kk},daysP3_all(kk,:));
+end
+fclose(fid_out);
+
+%% 2 Day Summary (After)
+daysP2_all = horzcat(daysP2_Bz,daysP2_Bt,daysP2_Bulk,daysP2_Pdyn,daysP2_J08,daysP2_J20,daysP2_B,daysP2_KP);
+
+filename_out = 'P2day_all_event_summaries.txt';%sprintf([path_to_output_files '%s_%s_supermag_MLT.txt'],startTime(1:10),endTime(1:10));
+fid_out = fopen(filename_out,'w');
+
+fprintf(fid_out,'%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n','Timestamp','IMF Bz','SW B Total','BulkSpeed','Dynamic Pressure','Eflux [0.8 MeV]','Eflux [2.0 MeV]','Observed B','KP Index');
+for kk = 1:size(daysP2_all,1)
+    fprintf(fid_out,'%s\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t%10.5f\t\n',eventTimes{kk},daysP2_all(kk,:));
 end
 fclose(fid_out);
 
